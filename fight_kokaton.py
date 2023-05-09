@@ -49,9 +49,29 @@ class Bird:
             True, 
             False
         )
+
+        img0 = pg.transform.rotozoom(pg.image.load(f"ex03/fig/{num}.png"),0,2.0)
+        img1 = pg.transform.flip(img0, True, False)
+
+        self._imgs={
+            (+1,0): img1,
+            (+1,-1): pg.transform.rotozoom(img1,45,1.0),
+            (0,-1): pg.transform.rotozoom(img1,90,1.0),
+            (+1,+1): pg.transform.rotozoom(img1,-45,1.0),
+            (0,+1): pg.transform.rotozoom(img1,-95,1.0),
+            (-1,0): img0,
+            (-1,+1): pg.transform.rotozoom(img0,-45,1.0),
+            (-1,-1): pg.transform.rotozoom(img0,45,1.0),
+
+        }
+
+        self._img=self._imgs[(+1,0)]
+
         self._rct = self._img.get_rect()
         self._rct.center = xy
 
+
+        self._imgs={(0,0):pg.transform.flip(pg.image.load(f"ex03/fig/{num}.png"))}
     def change_img(self, num: int, screen: pg.Surface):
         """
         こうかとん画像を切り替え，画面に転送する
@@ -67,14 +87,20 @@ class Bird:
         引数1 key_lst：押下キーの真理値リスト
         引数2 screen：画面Surface
         """
+        sum_mv=[0,0]
         for k, mv in __class__._delta.items():
             if key_lst[k]:
                 self._rct.move_ip(mv)
+                sum_mv[0] += mv[0] # 縦方向
+                sum_mv[1] += mv[1] # 横方向
+
         if check_bound(screen.get_rect(), self._rct) != (True, True):
             for k, mv in __class__._delta.items():
                 if key_lst[k]:
                     self._rct.move_ip(-mv[0], -mv[1])
-        screen.blit(self._img, self._rct)
+        # if not (sum_mv[0] == 0 and sum_mv[1]==1):
+        #     self._img=self._img = self._imgs[tuple[sum_mv]]
+        # screen.blit(self._img, self._rct)
 
 
 class Bomb:
@@ -132,7 +158,7 @@ class Beam:
 
        
 
-
+    
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
