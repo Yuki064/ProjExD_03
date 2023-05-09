@@ -134,6 +134,7 @@ class Beam:
         self._rct.left = bird._rct.right  # こうかとんの右側にビームの左側を合わせる
         self._rct.centery = bird._rct.centery
         self._vx, self._vy = +1, 0
+        
 
     def update(self, screen: pg.Surface):
         """
