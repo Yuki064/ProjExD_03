@@ -143,6 +143,25 @@ class Beam:
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+class Explosion:
+    def __init__(self, bomb: Bomb):
+        self._img = pg.transform.rotozoom(pg.image.load(f"ex03/fig/explosion.gif"), 0, 2.0)
+        self._imgs = [self._img, pg.transform.flip(self._img, True,True)]
+    
+        self._rct=self._img.get_rect()
+        self._rct.center=bomb._rct.center
+        self._life=100
+
+
+    def update(self, screen: pg.Surface):
+        # ex_imgs=[self._img, pg.transform.rotozoom(self._imgs , 0, 1.0)]
+        self._life -= 1
+        if self._life % 2 == 0:
+            screen.blit(self._imgs[0], self._rct)
+        else:
+            screen.blit(self._imgs[1], self._rct)
+
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -152,8 +171,9 @@ def main():
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
+    
     beam = None
-
+    exp: list[Explosion] = []
     tmr = 0
     while True:
         for event in pg.event.get():
@@ -178,14 +198,26 @@ def main():
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
 
+
+
+
         if beam is not None:  # ビームが存在しているとき
             beam.update(screen)
             for i, bomb in enumerate(bombs):
                 if beam._rct.colliderect(bomb._rct):
-                    beam = None
+                    beam = None 
+                    exp.append(Explosion(bomb))
+                    
+                    
                     del bombs[i]
                     bird.change_img(6, screen)
                     break
+        
+
+        for i in exp:
+            i.update(screen)
+            if i._life == 0:
+                exp.remove(i)
 
         pg.display.update()
         clock.tick(1000)
