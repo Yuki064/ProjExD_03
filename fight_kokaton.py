@@ -101,10 +101,10 @@ class Bomb:
         rad = random.randint(10, 50)
         color = random.choice(Bomb._colors)
         self._img = pg.Surface((2*rad, 2*rad))
-        pg.draw.circle(self._img, color, (rad, rad), rad)
-        self._img.set_colorkey((0, 0, 0))
+        pg.draw.circle(self._img, color, (rad, rad), rad) # ボムとなる円を作成
+        self._img.set_colorkey((0, 0, 0)) # 色
         self._rct = self._img.get_rect()
-        self._rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+        self._rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT) # ボムの位置をランダムに決める
         self._vx, self._vy = random.choice(Bomb._dires), random.choice(Bomb._dires)
 
     def update(self, screen: pg.Surface):
@@ -114,10 +114,10 @@ class Bomb:
         """
         yoko, tate = check_bound(screen.get_rect(), self._rct)
         if not yoko:
-            self._vx *= -1
+            self._vx *= -1 # 横に移動
         if not tate:
-            self._vy *= -1
-        self._rct.move_ip(self._vx, self._vy)
+            self._vy *= -1 # 縦に移動
+        self._rct.move_ip(self._vx, self._vy) # x,y動く
         screen.blit(self._img, self._rct)
 
 
